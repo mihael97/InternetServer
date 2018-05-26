@@ -90,15 +90,18 @@ public class SmartScriptEngine {
 						break;
 					case "-":
 						wrapper.subtract(argument);
+						break;
 					case "*":
 						wrapper.multiply(argument);
+						break;
 					case "/":
 						wrapper.divide(argument);
+						break;
 					default:
 						throw new IllegalArgumentException("Unsupported operation!");
 					}
 
-					temp.push((String) wrapper.getValue());
+					temp.push(String.valueOf(wrapper.getValue()));
 				}
 
 				if (token instanceof ElementFunction) {
@@ -106,10 +109,10 @@ public class SmartScriptEngine {
 
 					switch (funName) {
 					case "sin":
-						// temp.push(String.valueOf(Math.sin(Double.parseDouble((String) temp.pop()))));
-						// break;
+
 						ValueWrapper value = new ValueWrapper(temp.pop());
 						Double x = Double.parseDouble(value.getValue().toString());
+						System.out.println(String.valueOf(Math.sin(x)));
 						temp.push(String.valueOf(Math.sin(x)));
 						break;
 					case "dmft":

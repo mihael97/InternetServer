@@ -41,8 +41,8 @@ public class SmartScriptLexer {
 			throw new LexerException("Duljina niza je 0 ili je sam argument null");
 		}
 
-		//this.input = cleanArray(input);
-		this.input=input.toCharArray();
+		// this.input = cleanArray(input);
+		this.input = input.toCharArray();
 
 		arrayIndex = 0;
 		state = LexerStates.NONTAG;
@@ -172,6 +172,14 @@ public class SmartScriptLexer {
 				}
 
 				break;
+			} else if (inputChar == '@') {
+				if (pom.length() == 0) {
+					pom.append(input[arrayIndex++]);
+					continue;
+				}
+
+				pom=new StringBuilder(pom.toString().trim());
+				break;
 			} else {
 				pom.append(inputChar);
 			}
@@ -219,7 +227,6 @@ public class SmartScriptLexer {
 	 */
 	private Token makeObject(String string) {
 		Token forReturn = null;
-		System.out.println(string);
 
 		if (string == null) {
 			throw new NullPointerException();
@@ -238,7 +245,6 @@ public class SmartScriptLexer {
 			// drugi dio uvjeta ako je negativan broj
 			try {
 				if (string.contains(".")) {
-					System.out.println("TU!");
 					forReturn = new Token(TypeToken.DOUBLE, Double.parseDouble(string));
 				} else {
 					forReturn = new Token(TypeToken.INTEGER, Integer.parseInt(string));

@@ -172,7 +172,9 @@ public class ValueWrapper {
 				Integer first = (Integer) number1;
 
 				if (first.intValue() == 0) {
-					throw new ArithmeticException("Number can't be divided with zero!");
+					// throw new ArithmeticException("Number can't be divided with zero!");
+					value = 0;
+					return;
 				}
 
 				value = Integer.valueOf((Integer) number2 / first);
@@ -203,7 +205,6 @@ public class ValueWrapper {
 		}
 
 		try {
-			System.out.println(String.valueOf(number));
 			if (number instanceof Double) {
 				return Double.valueOf(Double.parseDouble(String.valueOf(number)));
 			}

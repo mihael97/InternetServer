@@ -55,7 +55,6 @@ public class SmartScriptParser {
 			getTokens();
 		} catch (LexerException e) {
 			throw new SmartScriptParserException(e.getMessage(), e);
-
 		}
 	}
 
@@ -191,7 +190,8 @@ public class SmartScriptParser {
 
 		for (int i = 1; i < collection.size(); i++) {
 			Element ele = makeElement((Token) collection.get(i));
-			forReturn.add(ele);
+			if (ele != null)
+				forReturn.add(ele);
 		}
 
 		EchoNode node = new EchoNode(copyArray(forReturn.toArray(), collection.size()));
@@ -299,6 +299,7 @@ public class SmartScriptParser {
 	 */
 	private Element makeElement(Token token) {
 		Element element = null;
+		System.out.println(token.toString());
 
 		switch (token.getType()) {
 		case INTEGER:
@@ -322,7 +323,8 @@ public class SmartScriptParser {
 
 			break;
 		case VARIABLE:
-			element = new ElementVariable(checkName((String) token.getValue()));
+			if (((String) token.getValue()).trim().length() != 0)
+				element = new ElementVariable(checkName(((String) token.getValue()).trim()));
 
 			break;
 		default:
@@ -349,22 +351,22 @@ public class SmartScriptParser {
 	 */
 	private String checkName(String value) {
 		char[] nameArray = value.toCharArray();
-		SmartScriptParserException exception = new SmartScriptParserException(
-				"Ime varijable " + value + " se ne moze prihvatiti!");
+		if (value.length() != 0) {
+			SmartScriptParserException exception = new SmartScriptParserException(
+					"Ime varijable " + value + " se ne moze prihvatiti!");
 
-		if (!Character.isLetter(nameArray[0])) {
-			System.out.println("TU 2");
-			throw exception;
-		} else {
-			for (int i = 1; i < nameArray.length; i++) {
-				char c = nameArray[i];
-				if (!(Character.isLetter(c) || Character.isDigit(c) || c == '_')) {
-					System.out.println("TU");
-					throw exception;
+			if (!Character.isLetter(nameArray[0])) {
+				throw exception;
+			} else {
+				for (int i = 1; i < nameArray.length; i++) {
+					char c = nameArray[i];
+					if (!(Character.isLetter(c) || Character.isDigit(c) || c == '_')) {
+						System.out.println("TU");
+						throw exception;
+					}
 				}
 			}
 		}
-
 		return value;
 	}
 

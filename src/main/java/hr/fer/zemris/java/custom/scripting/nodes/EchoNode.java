@@ -3,6 +3,7 @@ package hr.fer.zemris.java.custom.scripting.nodes;
 import java.util.Arrays;
 
 import hr.fer.zemris.java.custom.scripting.elems.Element;
+import hr.fer.zemris.java.custom.scripting.elems.ElementFunction;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 
 /**
@@ -27,6 +28,19 @@ public class EchoNode extends Node {
 	public EchoNode(Element[] elements) {
 		super();
 		this.elements = Arrays.copyOf(elements, elements.length);
+
+		System.out.println("\nEcho: ");
+		for (Element ele : elements) {
+			if (ele != null) {
+				System.out.print(ele.asText());
+
+				if (ele instanceof ElementFunction) {
+					System.out.print(" Funkcija");
+				}
+
+				System.out.println();
+			}
+		}
 	}
 
 	/**
