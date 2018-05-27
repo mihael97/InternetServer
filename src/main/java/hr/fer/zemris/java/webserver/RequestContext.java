@@ -78,6 +78,7 @@ public class RequestContext {
 		this.parameters = parameters == null ? new LinkedHashMap<>() : parameters;
 		this.persistentParameters = persistentParameters == null ? new LinkedHashMap<>() : parameters;
 		this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies;
+		temporaryParameters=new LinkedHashMap<>();
 	}
 
 	/**

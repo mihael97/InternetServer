@@ -29,18 +29,22 @@ public class EchoNode extends Node {
 		super();
 		this.elements = Arrays.copyOf(elements, elements.length);
 
-		System.out.println("\nEcho: ");
+		System.out.println("\nEcho:" + elements.length);
+		int index = 0;
 		for (Element ele : elements) {
 			if (ele != null) {
+				index++;
 				System.out.print(ele.asText());
 
 				if (ele instanceof ElementFunction) {
-					System.out.print(" Funkcija");
+					System.out.print(" FUNKCIJA");
 				}
 
-				System.out.println();
+				System.out.print(" - ");
 			}
 		}
+
+		System.out.println("\n");
 	}
 
 	/**

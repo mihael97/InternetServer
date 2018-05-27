@@ -155,6 +155,10 @@ public class SmartScriptLexer {
 		StringBuilder pom = new StringBuilder();
 
 		while ((inputChar = input[arrayIndex]) != ' ') {
+			if(Character.isWhitespace(inputChar)) {
+				arrayIndex++;
+				continue;
+			}
 			if (inputChar == '$') {
 				if (pom.length() == 0) {
 					pom.append(inputChar).append('}');
@@ -172,15 +176,17 @@ public class SmartScriptLexer {
 				}
 
 				break;
-			} else if (inputChar == '@') {
-				if (pom.length() == 0) {
-					pom.append(input[arrayIndex++]);
-					continue;
-				}
-
-				pom=new StringBuilder(pom.toString().trim());
-				break;
-			} else {
+			} 
+//			else if (inputChar == '@') {
+//				if (pom.length() == 0) {
+//					pom.append(input[arrayIndex++]);
+//					continue;
+//				}
+//
+//				pom=new StringBuilder(pom.toString().trim());
+//				break;
+//			} 
+			else {
 				pom.append(inputChar);
 			}
 			arrayIndex++;

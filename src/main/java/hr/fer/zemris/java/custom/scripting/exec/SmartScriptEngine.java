@@ -112,7 +112,6 @@ public class SmartScriptEngine {
 
 						ValueWrapper value = new ValueWrapper(temp.pop());
 						Double x = Double.parseDouble(value.getValue().toString());
-						System.out.println(String.valueOf(Math.sin(x)));
 						temp.push(String.valueOf(Math.sin(x)));
 						break;
 					case "dmft":

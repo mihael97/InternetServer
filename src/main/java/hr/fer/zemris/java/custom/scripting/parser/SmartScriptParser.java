@@ -299,7 +299,6 @@ public class SmartScriptParser {
 	 */
 	private Element makeElement(Token token) {
 		Element element = null;
-		System.out.println(token.toString());
 
 		switch (token.getType()) {
 		case INTEGER:
@@ -361,7 +360,6 @@ public class SmartScriptParser {
 				for (int i = 1; i < nameArray.length; i++) {
 					char c = nameArray[i];
 					if (!(Character.isLetter(c) || Character.isDigit(c) || c == '_')) {
-						System.out.println("TU");
 						throw exception;
 					}
 				}

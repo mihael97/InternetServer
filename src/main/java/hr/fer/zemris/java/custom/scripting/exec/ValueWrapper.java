@@ -214,13 +214,15 @@ public class ValueWrapper {
 			}
 
 			String casted = String.valueOf(number);
-
+			if (casted.charAt(0) == '\"' && casted.charAt(casted.length() - 1) == '\"') {
+				casted=casted.substring(1, casted.length() - 1);
+			}
 			if (casted.contains(".") || casted.contains("E"))
 				return Double.valueOf(Double.parseDouble(casted));
-
 			return Integer.valueOf(Integer.parseInt(casted));
 		} catch (NumberFormatException e) {
-			throw new ValueWrapperException("Value can't be casted to any supported type!");
+			throw new ValueWrapperException(
+					"Value \'" + String.valueOf(number) + "\' can't be casted to any supported type!");
 		}
 
 	}
