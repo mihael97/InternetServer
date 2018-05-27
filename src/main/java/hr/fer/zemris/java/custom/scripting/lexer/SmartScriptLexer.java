@@ -155,10 +155,6 @@ public class SmartScriptLexer {
 		StringBuilder pom = new StringBuilder();
 
 		while ((inputChar = input[arrayIndex]) != ' ') {
-			if(Character.isWhitespace(inputChar)) {
-				arrayIndex++;
-				continue;
-			}
 			if (inputChar == '$') {
 				if (pom.length() == 0) {
 					pom.append(inputChar).append('}');
@@ -176,21 +172,29 @@ public class SmartScriptLexer {
 				}
 
 				break;
-			} 
-//			else if (inputChar == '@') {
-//				if (pom.length() == 0) {
-//					pom.append(input[arrayIndex++]);
-//					continue;
-//				}
-//
-//				pom=new StringBuilder(pom.toString().trim());
-//				break;
-//			} 
-			else {
+			} else if (inputChar == '@') {
+				if (pom.length() == 0) {
+					pom.append(input[arrayIndex++]);
+					continue;
+				}
+
+				pom = new StringBuilder(pom.toString().trim());
+				break;
+			} else if (Character.isWhitespace(inputChar)) {
+				if (pom.length() != 0) {
+					break;
+				}
+
+				pom.append(inputChar);
+			} else {
+
 				pom.append(inputChar);
 			}
 			arrayIndex++;
 		}
+
+		if (inputChar == ' ')
+			arrayIndex++;
 
 		return makeObject(pom.toString());
 	}
@@ -205,9 +209,11 @@ public class SmartScriptLexer {
 		StringBuilder builder = new StringBuilder().append(inputChar);
 
 		while ((inputChar = input[arrayIndex]) != '\"') {
-			if (inputChar == '\\' && (arrayIndex + 1) != input.length) {
-				builder.append(input[++arrayIndex]);
-
+			if (inputChar == '\\' && (arrayIndex + 1) != input.length
+					&& (input[arrayIndex + 1] == 'r' || input[arrayIndex + 1] == 'n')) {
+				builder.append(input[arrayIndex + 1] == 'r' ? "\r" : "\n");
+				arrayIndex += 2;
+				continue;
 			} else {
 				builder.append(inputChar);
 			}
@@ -233,6 +239,7 @@ public class SmartScriptLexer {
 	 */
 	private Token makeObject(String string) {
 		Token forReturn = null;
+		System.out.println(string);
 
 		if (string == null) {
 			throw new NullPointerException();
@@ -256,12 +263,13 @@ public class SmartScriptLexer {
 					forReturn = new Token(TypeToken.INTEGER, Integer.parseInt(string));
 				}
 			} catch (NumberFormatException e) {
+				System.out.println("Ne moze se parsirati " + string);
 				throw new LexerException("Nemoguce parsirati!");
 			}
 		}
 
-		else if (isOperator(string)) {
-			forReturn = new Token(TypeToken.OPERATOR, string);
+		else if (isOperator(string.trim())) {
+			forReturn = new Token(TypeToken.OPERATOR, string.trim());
 		}
 
 		else if (isFunction(string)) {

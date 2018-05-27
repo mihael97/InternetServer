@@ -25,8 +25,10 @@ public class ElementString extends Element {
 		if (value == null) {
 			throw new NullPointerException("Vrijednost je null!");
 		}
-		this.value = value;
-				
+
+		this.value = value.charAt(0) == '\"' && value.charAt(value.length() - 1) == '\"' ? value.replace("\"", "")
+				: value;
+
 	}
 
 	/**

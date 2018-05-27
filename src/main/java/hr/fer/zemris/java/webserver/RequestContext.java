@@ -83,7 +83,7 @@ public class RequestContext {
 			Map<String, String> persistentParameters, List<RCCookie> outputCookies) {
 		this.outputStream = Objects.requireNonNull(outputStream);
 		this.parameters = parameters == null ? new LinkedHashMap<>() : parameters;
-		this.persistentParameters = persistentParameters == null ? new LinkedHashMap<>() : parameters;
+		this.persistentParameters = persistentParameters == null ? new LinkedHashMap<>() : persistentParameters;
 		this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies;
 		temporaryParameters = new LinkedHashMap<>();
 	}
@@ -232,6 +232,7 @@ public class RequestContext {
 	 * @return value stored in pair with argument
 	 */
 	public String getPersistentParameter(String name) {
+
 		return persistentParameters.get(name);
 	}
 

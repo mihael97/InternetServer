@@ -56,12 +56,18 @@ public class SmartScriptEngine {
 			String name = node.getVariable().asText();
 			multistack.push(name, start);
 
-			while (start.numCompare(end) < 0) {
+			// System.out.println("Start " + String.valueOf(start.getValue()) + ", end " +
+			// String.valueOf(end) + ", step "
+			// + String.valueOf(step));
+
+			while (start.numCompare(end) <= 0) {
 				for (int i = 0, n = node.numberOfChildren(); i < n; i++) {
 					node.getChild(i).accept(this);
 				}
+
 				multistack.peek(name).add(step);
 			}
+
 			multistack.pop(name);
 		}
 
@@ -99,11 +105,11 @@ public class SmartScriptEngine {
 			if (temp.size() != 0) {
 				Stack<String> secondStack = new Stack<>();
 
-				while (temp.size() != 0) {
-					secondStack.add(temp.pop());
-				}
+				// while (temp.size() != 0) {
+				// secondStack.add(temp.pop());
+				// }
 
-				for (String object : secondStack) {
+				for (String object : temp) {
 					try {
 						requestContext.write(object.getBytes());
 					} catch (IOException e) {
@@ -122,7 +128,7 @@ public class SmartScriptEngine {
 				Double x = Double.parseDouble(value.getValue().toString());
 				temp.push(String.valueOf(Math.sin(x)));
 				break;
-			case "dmft":
+			case "decfmt":
 				temp.push(new DecimalFormat(temp.pop().toString()).format(Double.parseDouble(temp.pop().toString())));
 				break;
 			case "dup":
@@ -200,10 +206,12 @@ public class SmartScriptEngine {
 
 			if (string.equals("temporary"))
 				value = requestContext.getTemporaryParameter(temp.pop().toString());
-			else if (string.equals("persistant"))
+			else if (string.equals("persistant")) {
 				value = requestContext.getPersistentParameter(temp.pop().toString());
-			else
-				value = requestContext.getParameters(temp.pop().toString());
+			} else {
+				String key = temp.pop().toString();
+				value = requestContext.getParameters(key);
+			}
 
 			temp.push((value == null) ? tempValue : value);
 		}

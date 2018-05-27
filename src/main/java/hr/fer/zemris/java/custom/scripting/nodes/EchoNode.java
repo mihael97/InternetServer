@@ -29,7 +29,7 @@ public class EchoNode extends Node {
 		super();
 		this.elements = Arrays.copyOf(elements, elements.length);
 
-		System.out.println("\nEcho:" + elements.length);
+		System.out.println("\nEcho:");
 		for (Element ele : elements) {
 			if (ele != null) {
 				System.out.print(ele.asText());
