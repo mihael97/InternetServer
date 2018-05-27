@@ -54,6 +54,12 @@ public class TextNode extends Node {
 		return builder.toString();
 	}
 
+	/**
+	 * Method is called when visitor want to pass trough {@link TextNode}
+	 * 
+	 * @param visitor
+	 *            - visitor
+	 */
 	@Override
 	public void accept(INodeVisitor visitor) {
 		visitor.visitTextNode(this);

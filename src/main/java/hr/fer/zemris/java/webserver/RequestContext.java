@@ -11,6 +11,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * Class represents one {@link RequestContext} with header and output stream
+ * where we store our data
+ * 
+ * @author Mihael
+ *
+ */
 public class RequestContext {
 	/**
 	 * Output stream where we store out data
@@ -78,7 +85,7 @@ public class RequestContext {
 		this.parameters = parameters == null ? new LinkedHashMap<>() : parameters;
 		this.persistentParameters = persistentParameters == null ? new LinkedHashMap<>() : parameters;
 		this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies;
-		temporaryParameters=new LinkedHashMap<>();
+		temporaryParameters = new LinkedHashMap<>();
 	}
 
 	/**
@@ -90,97 +97,243 @@ public class RequestContext {
 		return temporaryParameters;
 	}
 
+	/**
+	 * Method replaces temporary parameters map with new one
+	 * 
+	 * @param temporaryParameters
+	 *            - new temporary parameters map
+	 */
 	public void setTemporaryParameters(Map<String, String> temporaryParameters) {
 		this.temporaryParameters = temporaryParameters;
 	}
 
+	/**
+	 * Method returns map with persistent parameters
+	 * 
+	 * @return map with persistent parameters
+	 */
 	public Map<String, String> getPersistentParameters() {
 		return persistentParameters;
 	}
 
+	/**
+	 * Method replaces persistent parameters map with new one
+	 * 
+	 * @param persistentParameters
+	 *            - new persistent parameters map
+	 */
 	public void setPersistentParameters(Map<String, String> persistentParameters) {
 		this.persistentParameters = persistentParameters;
 	}
 
+	/**
+	 * Method returns parameters map
+	 * 
+	 * @return parameters map
+	 */
 	public Map<String, String> getParameters() {
 		return parameters;
 	}
 
+	/**
+	 * Method replaces new output stream
+	 * 
+	 * @param outputStream
+	 *            - new output stream
+	 */
 	public void setOutputStream(OutputStream outputStream) {
 		this.outputStream = outputStream;
 	}
 
+	/**
+	 * Method sets current encoding. Encoding cannot be changed after header is
+	 * generated
+	 * 
+	 * @param encoding
+	 *            - new encoding
+	 */
 	public void setEncoding(String encoding) {
 		checkHeader();
 		this.encoding = encoding;
 	}
 
+	/**
+	 * Method sets current status code. Status code cannot be changed after header
+	 * is generated
+	 * 
+	 * @param statusCode
+	 *            - new status code
+	 */
 	public void setStatusCode(int statusCode) {
 		checkHeader();
 		this.statusCode = statusCode;
 	}
 
+	/**
+	 * Method sets status text. Status text cannot be changed after header is
+	 * generated
+	 * 
+	 * @param statusText
+	 *            - new status text
+	 */
 	public void setStatusText(String statusText) {
 		checkHeader();
 		this.statusText = statusText;
 	}
 
+	/**
+	 * Method sets mime type.Mime type cannot be changed after header is generated
+	 * 
+	 * @param mimeType
+	 *            - new mime type
+	 */
 	public void setMimeType(String mimeType) {
 		checkHeader();
 		this.mimeType = mimeType;
 	}
 
+	/**
+	 * Method returns value stored in pair with argument
+	 * 
+	 * @param name
+	 *            - key
+	 * @return value stored in pair with argument
+	 */
 	public String getParameters(String name) {
 		return parameters.get(name);
 	}
 
+	/**
+	 * Method returns unmodifiable set of parameters keys
+	 * 
+	 * @return unmodifiable set of keys
+	 */
 	public Set<String> getParameterNames() {
 		return Collections.unmodifiableSet(parameters.keySet());
 	}
 
+	/**
+	 * Method sets output cookies. If header is already generated,cookies cannot be
+	 * changed
+	 * 
+	 * @param outputCookies
+	 *            - new output cookies
+	 */
 	public void setOutputCookies(List<RCCookie> outputCookies) {
 		checkHeader();
 		this.outputCookies = Objects.requireNonNull(outputCookies);
 	}
 
+	/**
+	 * Method returns value stored in pair with argument in persistent parameter map
+	 * 
+	 * @param name
+	 *            - key
+	 * @return value stored in pair with argument
+	 */
 	public String getPersistentParameter(String name) {
 		return persistentParameters.get(name);
 	}
 
+	/**
+	 * Method returns unmodifiable set with persistent parameter map keys
+	 * 
+	 * @return unmodifiable string set
+	 */
 	public Set<String> getPersistentParameterNames() {
 		return Collections.unmodifiableSet(persistentParameters.keySet());
 	}
 
+	/**
+	 * Method puts inside persistent parameter map pair with given key and value
+	 * 
+	 * @param name
+	 *            - key of pair
+	 * @param value
+	 *            - value of pair
+	 */
 	public void setPersistentParameter(String name, String value) {
 		persistentParameters.put(name, value);
 	}
 
+	/**
+	 * Method removes persistent parameter with given key
+	 * 
+	 * @param name
+	 *            - key of pair we want to remove
+	 */
 	public void removePersistentParameter(String name) {
 		persistentParameters.remove(name);
 	}
 
+	/**
+	 * Method returns value stored with argument key
+	 * 
+	 * @param name
+	 *            - key
+	 * @return value stored in pair with key
+	 */
 	public String getTemporaryParameter(String name) {
-		return temporaryParameters.remove(name);
+		return temporaryParameters.get(name);
 	}
 
+	/**
+	 * Method returns unmodifiable set with temporary parameters keys
+	 * 
+	 * @return unmodifiable String set
+	 */
 	public Set<String> getTemporaryParameterNames() {
 		return Collections.unmodifiableSet(temporaryParameters.keySet());
 	}
 
+	/**
+	 * Method puts value in map with temporary parameters
+	 * 
+	 * @param name
+	 *            - key
+	 * @param value
+	 *            - value we want to store
+	 */
 	public void setTemporaryParameter(String name, String value) {
 		temporaryParameters.put(name, value);
 	}
 
+	/**
+	 * Method removes temporary parameter with key as argument
+	 * 
+	 * @param name
+	 *            - key in map
+	 */
 	public void removeTemporaryParameter(String name) {
 		temporaryParameters.remove(name);
 	}
 
+	/**
+	 * Method writes data in output stream. During first call of method,file header
+	 * will be generated
+	 * 
+	 * @param data
+	 *            - bytes we want to store
+	 * @return this {@link RequestContext}
+	 * @throws IOException
+	 *             - problems during writing
+	 */
 	public RequestContext write(byte[] data) throws IOException {
 		writeHeader();
 		outputStream.write(data);
 		return this;
 	}
 
+	/**
+	 * Method accepts string and delegates work to constructor with byte array as
+	 * argument
+	 * 
+	 * @param text
+	 *            - text we want to store in output stream
+	 * @return this {@link RequestContext}
+	 * @throws IOException
+	 *             - problems during writing
+	 */
 	public RequestContext write(String text) throws IOException {
 		return write(text.getBytes(encoding));
 	}

@@ -56,8 +56,8 @@ public class ForLoopNode extends Node {
 		this.startExpression = startExpression;
 		this.endExpression = endExpression;
 		this.stepExpression = stepExpression;
-		
-		System.out.println("FOR LOOP  - "+toString());
+
+		System.out.println("FOR LOOP  - " + toString());
 	}
 
 	/**
@@ -136,6 +136,12 @@ public class ForLoopNode extends Node {
 		return string.toString();
 	}
 
+	/**
+	 * Method accepts visitor when he want to visit {@link ForLoopNode}
+	 * 
+	 * @param visitor
+	 *            - visitor
+	 */
 	@Override
 	public void accept(INodeVisitor visitor) {
 		visitor.visitForLoopNode(this);

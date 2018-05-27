@@ -30,10 +30,8 @@ public class EchoNode extends Node {
 		this.elements = Arrays.copyOf(elements, elements.length);
 
 		System.out.println("\nEcho:" + elements.length);
-		int index = 0;
 		for (Element ele : elements) {
 			if (ele != null) {
-				index++;
 				System.out.print(ele.asText());
 
 				if (ele instanceof ElementFunction) {
@@ -82,6 +80,12 @@ public class EchoNode extends Node {
 		return string.toString();
 	}
 
+	/**
+	 * Method accepts visitor when he want to visit {@link EchoNode}
+	 * 
+	 * @param visitor
+	 *            - visitor
+	 */
 	@Override
 	public void accept(INodeVisitor visitor) {
 		visitor.visitEchoNode(this);

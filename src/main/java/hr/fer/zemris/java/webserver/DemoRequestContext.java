@@ -7,13 +7,28 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class represents tester for {@link RequestContext}
+ * 
+ * @author Mihael
+ *
+ */
 public class DemoRequestContext {
+	/**
+	 * Main class
+	 * 
+	 * @param args
+	 *            - not in use
+	 * @throws IOException
+	 *             - if exception during reading happens
+	 */
 	public static void main(String[] args) throws IOException {
 		demo1("primjer1.txt", "ISO-8859-2");
 		demo1("primjer2.txt", "UTF-8");
 		demo2("primjer3.txt", "UTF-8");
 	}
 
+	@SuppressWarnings("javadoc")
 	private static void demo1(String filePath, String encoding) throws IOException {
 		OutputStream os = Files.newOutputStream(Paths.get(filePath));
 		RequestContext rc = new RequestContext(os, new HashMap<String, String>(), new HashMap<String, String>(),
@@ -27,6 +42,7 @@ public class DemoRequestContext {
 		os.close();
 	}
 
+	@SuppressWarnings("javadoc")
 	private static void demo2(String filePath, String encoding) throws IOException {
 		OutputStream os = Files.newOutputStream(Paths.get(filePath));
 		RequestContext rc = new RequestContext(os, new HashMap<String, String>(), new HashMap<String, String>(),

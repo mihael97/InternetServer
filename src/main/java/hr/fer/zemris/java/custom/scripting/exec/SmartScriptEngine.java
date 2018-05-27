@@ -11,7 +11,6 @@ import hr.fer.zemris.java.custom.scripting.elems.ElementFunction;
 import hr.fer.zemris.java.custom.scripting.elems.ElementOperator;
 import hr.fer.zemris.java.custom.scripting.elems.ElementString;
 import hr.fer.zemris.java.custom.scripting.elems.ElementVariable;
-import hr.fer.zemris.java.custom.scripting.lexer.Token;
 import hr.fer.zemris.java.custom.scripting.nodes.DocumentNode;
 import hr.fer.zemris.java.custom.scripting.nodes.EchoNode;
 import hr.fer.zemris.java.custom.scripting.nodes.ForLoopNode;
@@ -19,6 +18,12 @@ import hr.fer.zemris.java.custom.scripting.nodes.INodeVisitor;
 import hr.fer.zemris.java.custom.scripting.nodes.TextNode;
 import hr.fer.zemris.java.webserver.RequestContext;
 
+/**
+ * Class represents executor of parsed tree document
+ * 
+ * @author Mihael
+ *
+ */
 public class SmartScriptEngine {
 	/**
 	 * Document node
@@ -29,6 +34,9 @@ public class SmartScriptEngine {
 	 */
 	private RequestContext requestContext;
 	private ObjectMultistack multistack = new ObjectMultistack();
+	/**
+	 * Implementation of visitor with specified method for every type of node
+	 */
 	private INodeVisitor visitor = new INodeVisitor() {
 
 		@Override
@@ -80,86 +88,11 @@ public class SmartScriptEngine {
 				}
 
 				if (token instanceof ElementOperator) {
-					String operator = ((ElementOperator) token).asText();
-					Object argument = new ValueWrapper(temp.pop()).getValue();
-					ValueWrapper wrapper = new ValueWrapper(temp.pop());
-
-					switch (operator) {
-					case "+":
-						wrapper.add(argument);
-						break;
-					case "-":
-						wrapper.subtract(argument);
-						break;
-					case "*":
-						wrapper.multiply(argument);
-						break;
-					case "/":
-						wrapper.divide(argument);
-						break;
-					default:
-						throw new IllegalArgumentException("Unsupported operation!");
-					}
-
-					temp.push(String.valueOf(wrapper.getValue()));
+					operation(temp, token);
 				}
 
 				if (token instanceof ElementFunction) {
-					String funName = token.asText().substring(1);
-
-					switch (funName) {
-					case "sin":
-
-						ValueWrapper value = new ValueWrapper(temp.pop());
-						Double x = Double.parseDouble(value.getValue().toString());
-						temp.push(String.valueOf(Math.sin(x)));
-						break;
-					case "dmft":
-						temp.push(new DecimalFormat(temp.pop().toString())
-								.format(Double.parseDouble(temp.pop().toString())));
-						break;
-					case "dup":
-						temp.push(temp.peek());
-						break;
-					case "swap":
-						String first = temp.pop();
-						String second = temp.pop();
-
-						temp.push(first);
-						temp.push(second);
-						break;
-					case "setMimeType":
-						requestContext.setMimeType(temp.pop().toString());
-						break;
-					case "paramGet":
-						getparam("param", temp);
-						break;
-					case "pparamGet":
-						getparam("persistant", temp);
-					case "pparamSet":
-						if (temp.size() >= 2) {
-							String name = temp.pop().toString();
-							String val = temp.pop().toString();
-
-							requestContext.setPersistentParameter(name, val);
-						}
-						break;
-					case "pparamDel":
-						requestContext.removePersistentParameter(temp.pop().toString());
-						break;
-					case "tparamGet":
-						getparam("temporary", temp);
-						break;
-					case "tparamSet":
-						String nameTemporary = temp.pop().toString();
-						String valTemporary = temp.pop().toString();
-
-						requestContext.setTemporaryParameter(nameTemporary, valTemporary);
-						break;
-					case "tparamDel":
-						requestContext.removeTemporaryParameter(temp.pop().toString());
-						break;
-					}
+					function(temp, token);
 				}
 			}
 
@@ -174,11 +107,91 @@ public class SmartScriptEngine {
 					try {
 						requestContext.write(object.getBytes());
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}
+		}
+
+		private void function(Stack<String> temp, Element token) {
+			String funName = token.asText().substring(1);
+
+			switch (funName) {
+			case "sin":
+				ValueWrapper value = new ValueWrapper(temp.pop());
+				Double x = Double.parseDouble(value.getValue().toString());
+				temp.push(String.valueOf(Math.sin(x)));
+				break;
+			case "dmft":
+				temp.push(new DecimalFormat(temp.pop().toString()).format(Double.parseDouble(temp.pop().toString())));
+				break;
+			case "dup":
+				temp.push(temp.peek());
+				break;
+			case "swap":
+				String first = temp.pop();
+				String second = temp.pop();
+
+				temp.push(first);
+				temp.push(second);
+				break;
+			case "setMimeType":
+				requestContext.setMimeType(temp.pop().toString());
+				break;
+			case "paramGet":
+				getparam("param", temp);
+				break;
+			case "pparamGet":
+				getparam("persistant", temp);
+			case "pparamSet":
+				if (temp.size() >= 2) {
+					String name = temp.pop().toString();
+					String val = temp.pop().toString();
+
+					requestContext.setPersistentParameter(name, val);
+				}
+				break;
+			case "pparamDel":
+				requestContext.removePersistentParameter(temp.pop().toString());
+				break;
+			case "tparamGet":
+				getparam("temporary", temp);
+				break;
+			case "tparamSet":
+				String nameTemporary = temp.pop().toString();
+				String valTemporary = temp.pop().toString();
+
+				requestContext.setTemporaryParameter(nameTemporary, valTemporary);
+				break;
+			case "tparamDel":
+				requestContext.removeTemporaryParameter(temp.pop().toString());
+				break;
+			}
+		}
+
+		private void operation(Stack<String> temp, Element token) {
+			String operator = ((ElementOperator) token).asText();
+			Object argument = new ValueWrapper(temp.pop()).getValue();
+			ValueWrapper wrapper = new ValueWrapper(temp.pop());
+
+			switch (operator) {
+			case "+":
+				wrapper.add(argument);
+				break;
+			case "-":
+				wrapper.subtract(argument);
+				break;
+			case "*":
+				wrapper.multiply(argument);
+				break;
+			case "/":
+				wrapper.divide(argument);
+				break;
+			default:
+				throw new IllegalArgumentException("Unsupported operation! Operation: " + operator);
+			}
+
+			temp.push(String.valueOf(wrapper.getValue()));
 		}
 
 		private void getparam(String string, Stack<String> temp) {
@@ -194,11 +207,6 @@ public class SmartScriptEngine {
 
 			temp.push((value == null) ? tempValue : value);
 		}
-
-		// private void makeOperation(Object first, Object second, ElementOperator
-		// operator) {
-		//
-		// }
 
 		@Override
 		public void visitDocumentNode(DocumentNode node) {
