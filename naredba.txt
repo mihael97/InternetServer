@@ -1,0 +1,1 @@
+java -cp target/classes hr.fer.zemris.java.webserver.SmartHttpServer ./config/server.properties
