@@ -57,7 +57,7 @@ public class ForLoopNode extends Node {
 		this.endExpression = endExpression;
 		this.stepExpression = stepExpression;
 
-		System.out.println("FOR LOOP  - " + toString());
+		//System.out.println("FOR LOOP  - " + toString());
 	}
 
 	/**

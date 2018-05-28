@@ -63,6 +63,10 @@ public class RequestContext {
 	 * Shows if header is generated
 	 */
 	private boolean headerGenerated = false;
+	/**
+	 * Dispatcher
+	 */
+	private IDispatcher dispatcher;
 
 	/**
 	 * Constructor initializes new request
@@ -83,9 +87,37 @@ public class RequestContext {
 			Map<String, String> persistentParameters, List<RCCookie> outputCookies) {
 		this.outputStream = Objects.requireNonNull(outputStream);
 		this.parameters = parameters == null ? new LinkedHashMap<>() : parameters;
+		this.parameters.forEach((i, j) -> System.out.println(i + "=>" + j));
 		this.persistentParameters = persistentParameters == null ? new LinkedHashMap<>() : persistentParameters;
 		this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies;
 		temporaryParameters = new LinkedHashMap<>();
+	}
+
+	/**
+	 * Constructor initializes new request
+	 * 
+	 * @param outputStream
+	 *            - stream where we store out data
+	 * @param parameters
+	 *            - parameters
+	 * @param persistentParameters
+	 *            - persistent parameters
+	 * @param outputCookies
+	 *            - output cookies
+	 * @param temporaryParameters
+	 *            - temporary parameters
+	 * @param dispatcher
+	 *            - {@link IDispatcher} dispatcher
+	 * 
+	 * @throws NullPointerException
+	 *             - if output stream is null
+	 */
+	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
+			Map<String, String> persistentParameters, List<RCCookie> outputCookies,
+			Map<String, String> temporaryParameters, IDispatcher dispatcher) {
+		this(outputStream, temporaryParameters, persistentParameters, outputCookies);
+		this.temporaryParameters = temporaryParameters;
+		this.dispatcher = dispatcher;
 	}
 
 	/**
@@ -309,6 +341,10 @@ public class RequestContext {
 		temporaryParameters.remove(name);
 	}
 
+	public IDispatcher getDispatcher() {
+		return dispatcher;
+	}
+
 	/**
 	 * Method writes data in output stream. During first call of method,file header
 	 * will be generated
@@ -444,7 +480,7 @@ public class RequestContext {
 	}
 
 	/**
-	 * Public static for cookie implementation
+	 * Public static class for cookie implementation
 	 * 
 	 * @author Mihael
 	 *

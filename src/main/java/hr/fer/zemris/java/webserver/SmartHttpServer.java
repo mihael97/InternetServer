@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 
 import javax.lang.model.type.ReferenceType;
 
+import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
+import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
 /**
@@ -149,7 +151,7 @@ public class SmartHttpServer {
 		}
 	}
 
-	private class ClientWorker implements Runnable {
+	private class ClientWorker implements Runnable, IDispatcher {
 		private Socket csocket;
 		private PushbackInputStream istream;
 		private OutputStream ostream;
@@ -159,7 +161,7 @@ public class SmartHttpServer {
 		private Map<String, String> params = new HashMap<String, String>();
 		private Map<String, String> tempParams = new HashMap<String, String>();
 		private Map<String, String> permPrams = new HashMap<String, String>();
-		private List<RCCookie> outputCookies = new ArrayList<RequestContext.RCCookie>();
+		private List<RCCookie> outputCookies = new ArrayList<RCCookie>();
 		private String SID;
 
 		public ClientWorker(Socket csocket) {
@@ -193,6 +195,8 @@ public class SmartHttpServer {
 					parseParameters(requestedPath[1]);
 				}
 
+				internalDispatchRequest(path, true);
+
 				String extension = path.substring(path.lastIndexOf(".") + 1, path.length());
 				setHost(request);
 
@@ -202,7 +206,6 @@ public class SmartHttpServer {
 				rc.write(Files.readAllBytes(documentRoot.resolve(path)));
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -221,24 +224,6 @@ public class SmartHttpServer {
 			}
 
 			return true;
-		}
-
-		private boolean checkInvalidHeader(String[] info) {
-			if (info.length != 3) {
-				writeError(400, "Bad request");
-				return true;
-			}
-			method = info[0].toUpperCase();
-			if (!method.equals("GET")) {
-				writeError(405, "Method not allowed");
-				return true;
-			}
-			version = info[2].toUpperCase();
-			if (!version.equals("HTTP/1.1")) {
-				writeError(505, "HTTP version not supported");
-				return true;
-			}
-			return false;
 		}
 
 		private void setHost(List<String> request) {
@@ -351,6 +336,28 @@ public class SmartHttpServer {
 				}
 			}
 			return bos.toByteArray();
+		}
+
+		@Override
+		public void dispatchRequest(String urlPath) throws Exception {
+			internalDispatchRequest(urlPath, false);
+		}
+
+		private void internalDispatchRequest(String urlPath, boolean flag) {
+			if (urlPath.endsWith(".smscr")) {
+				String file;
+				try {
+					file = new String(Files.readAllBytes(Paths.get(urlPath)));
+					SmartScriptParser parser = new SmartScriptParser(file);
+					params.forEach((i,j)->System.out.println(i+" - "+j));
+					SmartScriptEngine engine = new SmartScriptEngine(parser.getDocumentNode(),
+							new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this));
+					engine.execute();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
 		}
 	}
 }

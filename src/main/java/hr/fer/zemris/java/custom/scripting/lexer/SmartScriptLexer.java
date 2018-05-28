@@ -239,7 +239,6 @@ public class SmartScriptLexer {
 	 */
 	private Token makeObject(String string) {
 		Token forReturn = null;
-		System.out.println(string);
 
 		if (string == null) {
 			throw new NullPointerException();
