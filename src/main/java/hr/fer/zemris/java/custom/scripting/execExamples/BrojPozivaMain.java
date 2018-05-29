@@ -13,8 +13,19 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
+/**
+ * Class represents test program
+ * 
+ * @author Mihael
+ *
+ */
 public class BrojPozivaMain {
 
+	/**
+	 * Main program
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		String documentBody = null;
 		try {

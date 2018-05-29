@@ -33,6 +33,9 @@ public class SmartScriptEngine {
 	 * Request
 	 */
 	private RequestContext requestContext;
+	/**
+	 * Stack where we store out elements
+	 */
 	private ObjectMultistack multistack = new ObjectMultistack();
 	/**
 	 * Implementation of visitor with specified method for every type of node
@@ -103,7 +106,7 @@ public class SmartScriptEngine {
 			}
 
 			if (temp.size() != 0) {
-				Stack<String> secondStack = new Stack<>();
+				
 
 				// while (temp.size() != 0) {
 				// secondStack.add(temp.pop());
@@ -210,7 +213,7 @@ public class SmartScriptEngine {
 				value = requestContext.getPersistentParameter(temp.pop().toString());
 			} else {
 				String key = temp.pop().toString();
-				value = requestContext.getParameters(key);
+				value = requestContext.getParameter(key);
 			}
 
 			temp.push((value == null) ? tempValue : value);

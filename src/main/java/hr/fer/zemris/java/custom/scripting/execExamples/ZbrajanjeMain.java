@@ -13,8 +13,19 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
+/**
+ * Class represents test program and shows result of two number addition
+ * 
+ * @author Mihael
+ *
+ */
 public class ZbrajanjeMain {
 
+	/**
+	 * Main program
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		String documentBody = null;
 		try {

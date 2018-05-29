@@ -115,7 +115,7 @@ public class RequestContext {
 	public RequestContext(OutputStream outputStream, Map<String, String> parameters,
 			Map<String, String> persistentParameters, List<RCCookie> outputCookies,
 			Map<String, String> temporaryParameters, IDispatcher dispatcher) {
-		this(outputStream, temporaryParameters, persistentParameters, outputCookies);
+		this(outputStream, parameters, persistentParameters, outputCookies);
 		this.temporaryParameters = temporaryParameters;
 		this.dispatcher = dispatcher;
 	}
@@ -231,7 +231,10 @@ public class RequestContext {
 	 *            - key
 	 * @return value stored in pair with argument
 	 */
-	public String getParameters(String name) {
+	public String getParameter(String name) {
+		
+		parameters.forEach((i,j)->System.out.println("Key: "+i+" Value: "+j));
+		
 		return parameters.get(name);
 	}
 
@@ -341,6 +344,11 @@ public class RequestContext {
 		temporaryParameters.remove(name);
 	}
 
+	/**
+	 * Method returns current dispatcher
+	 * 
+	 * @return {@link IDispatcher} dispatcher
+	 */
 	public IDispatcher getDispatcher() {
 		return dispatcher;
 	}

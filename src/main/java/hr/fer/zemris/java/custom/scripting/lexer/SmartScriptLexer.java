@@ -99,7 +99,7 @@ public class SmartScriptLexer {
 		StringBuilder builder = new StringBuilder();
 		char inputChar;
 
-		while ((inputChar = input[arrayIndex]) != '{') {
+		while ((inputChar = input[arrayIndex]) != '{' || inputChar == '{' && input[arrayIndex + 1] != '$') {
 			if (inputChar == '\\' && (input[arrayIndex + 1] == '\\' || input[arrayIndex + 1] == '{')) {
 				builder.append(input[++arrayIndex]);
 			} else {
@@ -341,73 +341,6 @@ public class SmartScriptLexer {
 		}
 
 		return false;
-	}
-
-	/**
-	 * Metoda koja provjerava nalazi li se u input leksicke zabrane,tj pojavljivanja
-	 * znakova u rasporedu koji nije dozvoljen
-	 * 
-	 * @param string
-	 *            - ulazni niz zadan preko argumenta konstruktora
-	 * @return - "cisti niz",niz od kojeg kasnije krecemo u leksicku analizu i
-	 *         proizvodnju tokena
-	 * 
-	 * @throws LexerException
-	 *             - ako se nadu znakovi u nedozvoljenom rasporedu
-	 */
-	private char[] cleanArray(String string) {
-		StringBuilder builder = new StringBuilder();
-
-		char[] array = string.toCharArray();
-		boolean tags = false;
-
-		for (int i = 0, length = string.length(); i < length; i++) {
-
-			if (tags == false) {
-				if (array[i] == '\\') {
-					if (((i + 1) != length && (array[i + 1] == '{' || array[i + 1] == '\\'))) {
-						builder.append(array[i]);
-						i++;
-					} else {
-						throw new LexerException("Pogreska kod dijela '\\' na indexu " + i);
-					}
-				} else if (array[i] == '{') {
-					if ((i + 1) != length && array[i + 1] == '$') {
-						tags = true;
-					} else {
-						throw new LexerException("Pogreska kod '{' na indexu " + i);
-					}
-
-				}
-
-			} else {
-				if (array[i] == '\\' && (i + 1) != length) {
-					if (array[i + 1] == '\\') {
-						builder.append(array[i]);
-						i++;
-					} else if (array[i + 1] == '\"') {
-						builder.append(array[i]);
-						i++;
-					} else {
-						throw new LexerException("Pogreska kod '\\' na indexu " + i);
-					}
-				} else if (array[i] == '}') {
-					if ((i - 1) != 0 && array[i - 1] == '$') {
-						tags = false;
-					} else {
-						throw new LexerException("Pogreska kod '}' na indexu " + i);
-					}
-				} else if (array[i] == '{') {
-					throw new LexerException("Tag unutar taga!");
-				}
-
-			}
-
-			builder.append(array[i]);
-
-		}
-
-		return builder.toString().toCharArray();
 	}
 
 }

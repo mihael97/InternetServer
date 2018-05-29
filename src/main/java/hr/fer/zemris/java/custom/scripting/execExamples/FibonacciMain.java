@@ -13,24 +13,35 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
+/**
+ * Class represents test program and shows first 10
+ * <code>Fibonacci numbers</code>
+ * 
+ * @author ime
+ *
+ */
 public class FibonacciMain {
 
+	/**
+	 * Main program
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		String documentBody =null;
+		String documentBody = null;
 		try {
-			documentBody = new String(Files.readAllBytes(Paths.get("src/main/resources/hr/fer/zemris/java/custom/scripting/exec/fibonacci.smscr")));
+			documentBody = new String(Files.readAllBytes(
+					Paths.get("src/main/resources/hr/fer/zemris/java/custom/scripting/exec/fibonacci.smscr")));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Map<String, String> parameters = new HashMap<String, String>();
-		Map<String,String> persistentParameters = new HashMap<String, String>();
+		Map<String, String> persistentParameters = new HashMap<String, String>();
 		List<RCCookie> cookies = new ArrayList<RequestContext.RCCookie>();
 		// create engine and execute it
-		new SmartScriptEngine(
-		new SmartScriptParser(documentBody).getDocumentNode(),
-		new RequestContext(System.out, parameters, persistentParameters, cookies)
-		).execute();
+		new SmartScriptEngine(new SmartScriptParser(documentBody).getDocumentNode(),
+				new RequestContext(System.out, parameters, persistentParameters, cookies)).execute();
 	}
 
 }
