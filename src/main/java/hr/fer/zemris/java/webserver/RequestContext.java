@@ -232,9 +232,7 @@ public class RequestContext {
 	 * @return value stored in pair with argument
 	 */
 	public String getParameter(String name) {
-		
-		parameters.forEach((i,j)->System.out.println("Key: "+i+" Value: "+j));
-		
+
 		return parameters.get(name);
 	}
 
@@ -267,7 +265,6 @@ public class RequestContext {
 	 * @return value stored in pair with argument
 	 */
 	public String getPersistentParameter(String name) {
-
 		return persistentParameters.get(name);
 	}
 
@@ -403,7 +400,6 @@ public class RequestContext {
 			try {
 				outputStream.write(header.toString().getBytes(charset));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -431,6 +427,10 @@ public class RequestContext {
 
 				if (cookie.getMaxAge() != null) {
 					header.append(" Max-Age=").append(cookie.maxAge).append(";");
+				}
+
+				if (cookie.http == true) {
+					header.append(" HttpOnly;");
 				}
 			}
 
@@ -514,9 +514,41 @@ public class RequestContext {
 		 * Cookie max age
 		 */
 		private Integer maxAge;
+		/**
+		 * Represents if cookie if http only
+		 */
+		private boolean http;
 
 		/**
 		 * Constructor for new {@link RCCookie} instance
+		 * 
+		 * @param name
+		 *            - name
+		 * @param value
+		 *            - value
+		 * @param maxAge
+		 *            - maximal age
+		 * @param domain
+		 *            - domain
+		 * @param path
+		 *            - path
+		 * @param http
+		 *            - flag if cookie if http only
+		 * 
+		 * @throws NullPointerException
+		 *             - if name or value are <code>null</code>
+		 */
+		public RCCookie(String name, String value, Integer maxAge, String domain, String path, boolean http) {
+			this.name = Objects.requireNonNull(name);
+			this.value = Objects.requireNonNull(value);
+			this.maxAge = maxAge;
+			this.path = path;
+			this.http = http;
+		}
+
+		/**
+		 * Constructor for new {@link RCCookie} instance. Sets property for HTTP only
+		 * cookie to <code>false</code>
 		 * 
 		 * @param name
 		 *            - name
@@ -533,10 +565,7 @@ public class RequestContext {
 		 *             - if name or value are <code>null</code>
 		 */
 		public RCCookie(String name, String value, Integer maxAge, String domain, String path) {
-			this.name = Objects.requireNonNull(name);
-			this.value = Objects.requireNonNull(value);
-			this.maxAge = maxAge;
-			this.path = path;
+			this(name, value, maxAge, domain, path, false);
 		}
 
 		/**
@@ -582,6 +611,15 @@ public class RequestContext {
 		 */
 		public Integer getMaxAge() {
 			return maxAge;
+		}
+
+		/**
+		 * Method returns if cookie if HTTP only
+		 * 
+		 * @return <code>true</code> if cookie i HTTP only,otherwise <code>false</code>
+		 */
+		public boolean isHttp() {
+			return http;
 		}
 
 	}

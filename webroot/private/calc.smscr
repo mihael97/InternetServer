@@ -1,7 +1,22 @@
 {$ = "text/html" @setMimeType $}
 
 <!DOCTYPE html>
+
 <html>
+<head>
+<style>
+
+td, th {
+    border: 1px solid #dddddd;
+}
+
+</style>
+</head>
+
+
+<html>
+
+
 <body>
 
 <h1>Zbrajanje</h1>

@@ -9,7 +9,7 @@ public class Home implements IWebWorker {
 	public void processRequest(RequestContext context) throws Exception {
 
 		context.setTemporaryParameter("background",
-				context.getPersistentParameter("bgcolor") != null ? context.getPersistentParameter("bgcolor")
+				context.getPersistentParameter("background") != null ? context.getPersistentParameter("bgcolor")
 						: "7F7F7F");
 		context.getDispatcher().dispatchRequest("/private/home.smscr");
 	}

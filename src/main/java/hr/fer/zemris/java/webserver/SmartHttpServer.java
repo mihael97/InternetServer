@@ -24,7 +24,6 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import hr.fer.zemris.java.custom.scripting.exec.SmartScriptEngine;
 import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
@@ -107,8 +106,7 @@ public class SmartHttpServer {
 
 			try {
 				Thread.sleep(1000 * 5 * 60); // method waits for 5 minutes(300000 miliseconds)
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			} catch (InterruptedException ignore) {
 			}
 		}
 	});
@@ -463,7 +461,7 @@ public class SmartHttpServer {
 
 		/**
 		 * Synchronized method checks cookies and current session
-		 * 
+		 *
 		 * @param request
 		 *            - header lines
 		 */
@@ -527,13 +525,13 @@ public class SmartHttpServer {
 			}
 
 			sessions.put(uniqueSid, entry);
-			outputCookies.add(new RCCookie("sid", uniqueSid, null, this.host, "/"));
+			outputCookies.add(new RCCookie("sid", uniqueSid, null, this.host, "/", true));
 		}
 
 		/**
 		 * Method calculates unique key(sid). Every sid is string made by 20 random
 		 * generated upper case characters
-		 * 
+		 *
 		 * @return unique sid
 		 */
 		private String getSID() {
@@ -587,6 +585,7 @@ public class SmartHttpServer {
 		 *            - string with parameters
 		 */
 		private void parseParameters(String string) {
+			System.out.println("Parameters are "+string);
 			for (String str : string.split("&")) {
 				String[] values = str.trim().split("=");
 				params.put(values[0], values[1]);
@@ -666,46 +665,6 @@ public class SmartHttpServer {
 		private byte[] readBytes(PushbackInputStream is) throws IOException {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			int state = 0;
-			// l: while (true) {
-			// int b = is.read();
-			// if (b == -1)
-			// return null;
-			// if (b != 13) {
-			// bos.write(b);
-			// }
-			// switch (state) {
-			// case 0:
-			// if (b == 13) {
-			// state = 1;
-			// } else if (b == 10)
-			// state = 4;
-			// break;
-			// case 1:
-			// if (b == 10) {
-			// state = 2;
-			// } else
-			// state = 0;
-			// break;
-			// case 2:
-			// if (b == 13) {
-			// state = 3;
-			// } else
-			// state = 0;
-			// break;
-			// case 3:
-			// if (b == 10) {
-			// break l;
-			// } else
-			// state = 0;
-			// break;
-			// case 4:
-			// if (b == 10) {
-			// break l;
-			// } else
-			// state = 0;
-			// break;
-			// }
-			// }
 
 			while (true) {
 				int b = istream.read();
@@ -789,8 +748,7 @@ public class SmartHttpServer {
 					writeError(404, "Direct access is not allowed!");
 					return;
 				}
-
-				executeSMSCR("webroot/private/calc.smscr");
+				executeSMSCR("webroot" + urlPath);
 				return;
 			}
 
@@ -821,9 +779,7 @@ public class SmartHttpServer {
 			String file;
 			try {
 				file = new String(Files.readAllBytes(Paths.get(path)));
-				System.out.println("Prije parsera sam!");
 				SmartScriptParser parser = new SmartScriptParser(file);
-				System.out.println("Poslije parsera!");
 				SmartScriptEngine engine = new SmartScriptEngine(parser.getDocumentNode(),
 						new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this));
 				engine.execute();
