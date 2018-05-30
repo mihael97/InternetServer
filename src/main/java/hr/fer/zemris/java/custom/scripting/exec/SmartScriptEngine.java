@@ -59,10 +59,6 @@ public class SmartScriptEngine {
 			String name = node.getVariable().asText();
 			multistack.push(name, start);
 
-			// System.out.println("Start " + String.valueOf(start.getValue()) + ", end " +
-			// String.valueOf(end) + ", step "
-			// + String.valueOf(step));
-
 			while (start.numCompare(end) <= 0) {
 				for (int i = 0, n = node.numberOfChildren(); i < n; i++) {
 					node.getChild(i).accept(this);
@@ -106,15 +102,15 @@ public class SmartScriptEngine {
 			}
 
 			if (temp.size() != 0) {
-				
+				Stack<String> second = new Stack<>();
 
-				// while (temp.size() != 0) {
-				// secondStack.add(temp.pop());
-				// }
+				while (temp.size() != 0) {
+					second.push(temp.pop().toString());
+				}
 
-				for (String object : temp) {
+				while (second.size() != 0) {
 					try {
-						requestContext.write(object.getBytes());
+						requestContext.write(second.pop().toString());
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -127,12 +123,12 @@ public class SmartScriptEngine {
 
 			switch (funName) {
 			case "sin":
-				ValueWrapper value = new ValueWrapper(temp.pop());
-				Double x = Double.parseDouble(value.getValue().toString());
-				temp.push(String.valueOf(Math.sin(x)));
+				String obj = temp.pop();
+				Double value = Double.parseDouble(obj);
+				temp.push(String.valueOf(Math.sin(value * Math.PI / 180)));
 				break;
 			case "decfmt":
-				temp.push(new DecimalFormat(temp.pop().toString()).format(Double.parseDouble(temp.pop().toString())));
+				temp.push(new DecimalFormat(temp.pop().toString()).format(Double.valueOf(temp.pop())));
 				break;
 			case "dup":
 				temp.push(temp.peek());

@@ -17,7 +17,7 @@ import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
  * Class represents test program and shows first 10
  * <code>Fibonacci numbers</code>
  * 
- * @author ime
+ * @author Mihael
  *
  */
 public class FibonacciMain {

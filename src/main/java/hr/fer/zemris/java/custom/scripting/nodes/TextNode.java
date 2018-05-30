@@ -28,7 +28,7 @@ public class TextNode extends Node {
 	 * @return String
 	 */
 	public String getText() {
-		return prepareForOutput();
+		return text;
 	}
 
 	/**

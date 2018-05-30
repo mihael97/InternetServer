@@ -145,6 +145,8 @@ public class SmartHttpServer {
 	 * 
 	 * @param configFileName
 	 *            - path to server properties file
+	 * @throws IOException
+	 *             - exception during reading
 	 */
 	public SmartHttpServer(String configFileName) {
 		Properties file = new Properties();
@@ -152,7 +154,6 @@ public class SmartHttpServer {
 		try {
 			file.load(Files.newInputStream(Paths.get(configFileName)));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -175,6 +176,9 @@ public class SmartHttpServer {
 	 * 
 	 * @param property
 	 *            - path to worker properties file
+	 * 
+	 * @throws IOException
+	 *             - exception during reading
 	 */
 	private void loadWorkers(String property) {
 		Properties file = new Properties();
@@ -201,6 +205,9 @@ public class SmartHttpServer {
 	 * @param className
 	 *            - path to class on disc
 	 * @return worker class
+	 * 
+	 * @throws Exception
+	 *             - if any exception appears
 	 */
 	private IWebWorker getWorker(String className) {
 		try {
@@ -220,6 +227,8 @@ public class SmartHttpServer {
 	 * 
 	 * @param property
 	 *            - path to file
+	 * @throws IllegalArgumentException
+	 *             - if mime file cannot be loaded
 	 */
 	private void loadMimes(String property) {
 		Properties file = new Properties();
@@ -392,6 +401,9 @@ public class SmartHttpServer {
 
 		/**
 		 * Method performs request processing
+		 * 
+		 * @throws IOException
+		 *             - exception during writing
 		 */
 		@Override
 		public void run() {
@@ -409,20 +421,19 @@ public class SmartHttpServer {
 				String firstLine = request.get(0); // first line,stored method,version and requested path
 				String[] contest = firstLine.split(" "); // contest form first line
 
+				method = contest[0].toUpperCase().trim();
+				version = contest[2].toUpperCase().trim();
+
 				if (contest.length != 3) {
 					writeError(400, "Number of arguments in first line must be 3!");
 					return;
-				} else if (!contest[0].toUpperCase().equals("GET")) {
+				} else if (!method.equals("GET")) {
 					writeError(400, "Method must be GET!");
 					return;
-				} else if (!contest[2].toUpperCase().equals("HTTP/1.0")
-						&& !contest[2].toUpperCase().equals("HTTP/1.1")) {
+				} else if (!version.equals("HTTP/1.0") && !version.equals("HTTP/1.1")) {
 					writeError(400, "HTTP version must be 1.0 or 1.1! but is " + contest[2]);
 					return;
 				}
-
-				method = contest[0].toUpperCase().trim();
-				version = contest[2].toUpperCase().trim();
 
 				String[] requestedPath = contest[1].split("\\?"); // first part is path and after are parameters
 				String path = requestedPath[0].substring(1);
@@ -440,7 +451,9 @@ public class SmartHttpServer {
 					RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
 					rc.setStatusCode(200);
 					rc.setMimeType(setMime(extension));
-					rc.write(Files.readAllBytes(documentRoot.resolve(path)));
+					byte[] file = Files.readAllBytes(documentRoot.resolve(path));
+					rc.setLength((long) file.length);
+					rc.write(file);
 				} else {
 					processed = false;
 				}
@@ -452,7 +465,6 @@ public class SmartHttpServer {
 				try {
 					csocket.close();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -585,7 +597,6 @@ public class SmartHttpServer {
 		 *            - string with parameters
 		 */
 		private void parseParameters(String string) {
-			System.out.println("Parameters are "+string);
 			for (String str : string.split("&")) {
 				String[] values = str.trim().split("=");
 				params.put(values[0], values[1]);
@@ -599,6 +610,9 @@ public class SmartHttpServer {
 		 *            - error code
 		 * @param string
 		 *            error description
+		 * 
+		 * @throws IOException
+		 *             - exception during writing
 		 */
 		private void writeError(int i, String string) {
 			try {
@@ -608,7 +622,6 @@ public class SmartHttpServer {
 				ostream.flush();
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -728,7 +741,6 @@ public class SmartHttpServer {
 		 *            - shows if dispatch request is from inside program
 		 */
 		private void internalDispatchRequest(String urlPath, boolean flag) {
-
 			if (this.context == null) {
 				this.context = new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this);
 			}
@@ -774,6 +786,7 @@ public class SmartHttpServer {
 		 * 
 		 * @param path
 		 *            - path to script
+		 *            
 		 */
 		private void executeSMSCR(String path) {
 			String file;
@@ -790,7 +803,7 @@ public class SmartHttpServer {
 		}
 
 		/**
-		 * Method execute worker class
+		 * Method executes worker class
 		 * 
 		 * @param className
 		 *            - worker class name
@@ -798,6 +811,7 @@ public class SmartHttpServer {
 		private void executeWorker(String className) {
 			try {
 				getWorker(className).processRequest(context);
+				processed = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

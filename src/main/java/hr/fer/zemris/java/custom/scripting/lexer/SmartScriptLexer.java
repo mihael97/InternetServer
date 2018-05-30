@@ -100,11 +100,7 @@ public class SmartScriptLexer {
 		char inputChar;
 
 		while ((inputChar = input[arrayIndex]) != '{' || inputChar == '{' && input[arrayIndex + 1] != '$') {
-			if (inputChar == '\\' && (input[arrayIndex + 1] == '\\' || input[arrayIndex + 1] == '{')) {
-				builder.append(input[++arrayIndex]);
-			} else {
-				builder.append(inputChar);
-			}
+			builder.append(inputChar);
 
 			if ((arrayIndex + 1) != input.length) {
 				arrayIndex++;

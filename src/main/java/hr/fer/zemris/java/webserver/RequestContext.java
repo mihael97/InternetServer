@@ -67,6 +67,10 @@ public class RequestContext {
 	 * Dispatcher
 	 */
 	private IDispatcher dispatcher;
+	/**
+	 * Represents file size
+	 */
+	private Long length;
 
 	/**
 	 * Constructor initializes new request
@@ -87,10 +91,10 @@ public class RequestContext {
 			Map<String, String> persistentParameters, List<RCCookie> outputCookies) {
 		this.outputStream = Objects.requireNonNull(outputStream);
 		this.parameters = parameters == null ? new LinkedHashMap<>() : parameters;
-		this.parameters.forEach((i, j) -> System.out.println(i + "=>" + j));
 		this.persistentParameters = persistentParameters == null ? new LinkedHashMap<>() : persistentParameters;
 		this.outputCookies = outputCookies == null ? new ArrayList<>() : outputCookies;
 		temporaryParameters = new LinkedHashMap<>();
+		length = null;
 	}
 
 	/**
@@ -363,6 +367,7 @@ public class RequestContext {
 	public RequestContext write(byte[] data) throws IOException {
 		writeHeader();
 		outputStream.write(data);
+
 		return this;
 	}
 
@@ -388,10 +393,14 @@ public class RequestContext {
 		if (!headerGenerated) {
 			headerGenerated = true;
 			charset = Charset.forName(encoding);
-
 			StringBuilder header = new StringBuilder();
 
 			header.append("HTTP/1.1 ").append(statusCode).append(" ").append(statusText).append("\r\n");
+
+			if (length != null) {
+				header.append("Content-Length: " + length.longValue());
+			}
+
 			setMime(header);
 			setCookies(header);
 
@@ -399,6 +408,7 @@ public class RequestContext {
 
 			try {
 				outputStream.write(header.toString().getBytes(charset));
+				outputStream.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -485,6 +495,17 @@ public class RequestContext {
 		if (cookie != null) {
 			this.outputCookies.add(cookie);
 		}
+	}
+
+	/**
+	 * Method return file length
+	 * 
+	 * @param lenght
+	 *            - file length
+	 */
+	public void setLength(Long lenght) {
+		checkHeader();
+		this.length = lenght;
 	}
 
 	/**
@@ -623,5 +644,4 @@ public class RequestContext {
 		}
 
 	}
-
 }

@@ -13,14 +13,25 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
+/**
+ * Class represents test program
+ * 
+ * @author Mihael
+ *
+ */
 public class OsnovniMain {
 
+	/**
+	 * Main program
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
-		String documentBody=null;
+		String documentBody = null;
 		try {
-			documentBody = new String(Files.readAllBytes(Paths.get("src/main/resources/hr/fer/zemris/java/custom/scripting/exec/osnovni.smscr")));
+			documentBody = new String(Files.readAllBytes(
+					Paths.get("src/main/resources/hr/fer/zemris/java/custom/scripting/exec/osnovni.smscr")));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Map<String, String> parameters = new HashMap<String, String>();

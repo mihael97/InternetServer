@@ -2,8 +2,13 @@
 <html>
 	<head>
 		<style>
-			body {background-color: {$ = "background" 0 @tparamGet $}}
+			body{
+				background-color: #{$ = "background" 0 @tparamGet $}
+			}
 		</style>
+		<title>
+			Home
+		</title>
 	</head>
 	<body>
 		<p><a href="http://www.localhost.com:5721/scripts/osnovni.smscr">osnovni</a></p>
@@ -12,7 +17,7 @@
 		<p><a href="http://www.localhost.com:5721/ext/HelloWorker">HelloWorker</a></p>
 		<p><a href="http://www.localhost.com:5721/ext/CircleWorker">CircleWorker</a></p>
 		
-		<form action="http://www.localhost.com:5721/calc" "method="get">
+		<form action="http://www.localhost.com:5721/calc" method="get">
   			a: <input type="text" name="a"><br>
  			b: <input type="text" name="b"><br>
  			<input type="submit" value="Submit">
