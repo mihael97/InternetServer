@@ -425,23 +425,25 @@ public class RequestContext {
 	private void setCookies(StringBuilder header) {
 		if (outputCookies.size() != 0) {
 			for (RCCookie cookie : outputCookies) {
-				header.append(" " + cookie.getName()).append("\"").append(cookie.getValue()).append("\";");
+				header.append("Set-Cookie:");
+				header.append(" " + cookie.getName()).append("=\"").append(cookie.getValue()).append("\"");
 
 				if (cookie.getDomain() != null) {
-					header.append(" Domain=").append(cookie.domain).append(";");
+					header.append("; Domain=").append(cookie.domain);
 				}
 
 				if (cookie.getPath() != null) {
-					header.append(" Path=").append(cookie.path).append(";");
+					header.append("; Path=").append(cookie.path);
 				}
 
 				if (cookie.getMaxAge() != null) {
-					header.append(" Max-Age=").append(cookie.maxAge).append(";");
+					header.append("; Max-Age=").append(cookie.maxAge);
 				}
 
 				if (cookie.http == true) {
-					header.append(" HttpOnly;");
+					header.append("; HttpOnly");
 				}
+				header.append("\r\n");
 			}
 
 			header.append("\r\n");

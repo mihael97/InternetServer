@@ -11,11 +11,11 @@
 		</title>
 	</head>
 	<body>
-		<p><a href="http://www.localhost.com:5721/scripts/osnovni.smscr">osnovni</a></p>
-		<p><a href="http://www.localhost.com:5721/scripts/brojPoziva.smscr">brojPoziva</a></p>
-		<p><a href="http://www.localhost.com:5721/scripts/fibonaccih.smscr">Fibonacci-HTML</a></p>
-		<p><a href="http://www.localhost.com:5721/ext/HelloWorker">HelloWorker</a></p>
-		<p><a href="http://www.localhost.com:5721/ext/CircleWorker">CircleWorker</a></p>
+		<p><a href="scripts/osnovni.smscr">osnovni</a></p>
+		<p><a href="scripts/brojPoziva.smscr">brojPoziva</a></p>
+		<p><a href="scripts/fibonaccih.smscr">Fibonacci-HTML</a></p>
+		<p><a href="ext/HelloWorker">HelloWorker</a></p>
+		<p><a href="ext/CircleWorker">CircleWorker</a></p>
 		
 		<form action="http://www.localhost.com:5721/calc" method="get">
   			a: <input type="text" name="a"><br>

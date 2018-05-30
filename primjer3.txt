@@ -1,5 +1,7 @@
 HTTP/1.1 205 Idemo dalje
 Content-Type: text/plain; charset=UTF-8
- korisnik"perica"; Path=/; Max-Age=3600; zgrada"B4"; Path=/;
+Set-Cookie: korisnik="perica"; Path=/; Max-Age=3600
+Set-Cookie: zgrada="B4"; Path=/
+
 
 Čevapčići i Šiščevapčići.

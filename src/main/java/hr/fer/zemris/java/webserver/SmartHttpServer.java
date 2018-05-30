@@ -383,10 +383,6 @@ public class SmartHttpServer {
 		 * Request context
 		 */
 		private RequestContext context = null;
-		/**
-		 * Shows if we processed request
-		 */
-		private boolean processed = false;
 
 		/**
 		 * Constructor initialize new {@link ClientWorker}
@@ -445,19 +441,6 @@ public class SmartHttpServer {
 
 				internalDispatchRequest(path, true);
 
-				if (!processed) {
-					String extension = path.substring(path.lastIndexOf(".") + 1, path.length());
-
-					RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
-					rc.setStatusCode(200);
-					rc.setMimeType(setMime(extension));
-					byte[] file = Files.readAllBytes(documentRoot.resolve(path));
-					rc.setLength((long) file.length);
-					rc.write(file);
-				} else {
-					processed = false;
-				}
-
 			} catch (NoSuchFileException ignore) {
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -480,41 +463,35 @@ public class SmartHttpServer {
 		private synchronized void checkSession(List<String> request) {
 			String sidCandidate = null;
 
-			for (String string : request) {
-				if (string.startsWith("Cookie:")) {
-					for (String cookie : string.substring("Cookie:".length()).trim().split(";")) {
-						String[] cookieElements = cookie.split("=");
-						if (cookieElements[0].equals("sid")) {
-							sidCandidate = cookieElements[1];
-							break;
+			for (String line : request) {
+				if (line.trim().startsWith("Cookie:")) {
+					for (String cookie : line.substring("Cookie: ".length()).split(";")) {
+						String[] cookieElement = cookie.split("=");
+
+						if (cookieElement[0].equals("sid")) {
+							sidCandidate = cookieElement[1].replace("\"", "");
 						}
 					}
-
-					if (sidCandidate != null)
-						break;
 				}
 			}
 
-			// if we found sidCandidate
 			if (sidCandidate != null) {
 				SessionMapEntry entry = sessions.get(sidCandidate);
 
-				if (!entry.host.equals(host)) {
-					createEntry();
-				}
+				if (entry != null) {
+					if (entry.host == null && host == null || entry.host.equals(host)) {
+						if (checkDate(entry.validUntil)) {
+							entry.validUntil = System.currentTimeMillis() / 1000 + sessionTimeout;
+							setSeedAndPerm(entry);
+							return;
+						}
 
-				if (!checkDate(entry.validUntil)) {
-					sessions.remove(entry.sid); // session is not active,we need to remove it
-					createEntry();
+						sessions.remove(sidCandidate);
+					}
 				}
-
-				SID = entry.sid;
-				entry.validUntil += SmartHttpServer.this.sessionTimeout; // valid session,we are extending its valid
-				return;
 			}
 
 			createEntry();
-			permPrams = sessions.get(SID).map;
 		}
 
 		/**
@@ -522,7 +499,6 @@ public class SmartHttpServer {
 		 */
 		private void createEntry() {
 			String uniqueSid = getSID();
-			SID = uniqueSid;
 
 			SessionMapEntry entry = new SessionMapEntry();
 			entry.sid = uniqueSid;
@@ -538,6 +514,19 @@ public class SmartHttpServer {
 
 			sessions.put(uniqueSid, entry);
 			outputCookies.add(new RCCookie("sid", uniqueSid, null, this.host, "/", true));
+
+			setSeedAndPerm(entry);
+		}
+
+		/**
+		 * Method sets current id and perm map to same type entry values
+		 * 
+		 * @param entry
+		 *            - {@link SessionMapEntry}
+		 */
+		private void setSeedAndPerm(SessionMapEntry entry) {
+			SID = entry.sid;
+			permPrams = entry.map;
 		}
 
 		/**
@@ -751,7 +740,6 @@ public class SmartHttpServer {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				processed = true;
 				return;
 			}
 
@@ -779,6 +767,23 @@ public class SmartHttpServer {
 				return;
 			}
 
+			if (urlPath.equals("favicon.ico"))
+				return;
+
+			String extension = urlPath.substring(urlPath.lastIndexOf(".") + 1, urlPath.length());
+
+			RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
+			rc.setStatusCode(200);
+			rc.setMimeType(setMime(extension));
+			byte[] file;
+			try {
+				file = Files.readAllBytes(documentRoot.resolve(urlPath));
+				rc.setLength((long) file.length);
+				rc.write(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 
 		/**
@@ -786,7 +791,7 @@ public class SmartHttpServer {
 		 * 
 		 * @param path
 		 *            - path to script
-		 *            
+		 * 
 		 */
 		private void executeSMSCR(String path) {
 			String file;
@@ -796,7 +801,6 @@ public class SmartHttpServer {
 				SmartScriptEngine engine = new SmartScriptEngine(parser.getDocumentNode(),
 						new RequestContext(ostream, params, permPrams, outputCookies, tempParams, this));
 				engine.execute();
-				processed = true;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -811,11 +815,9 @@ public class SmartHttpServer {
 		private void executeWorker(String className) {
 			try {
 				getWorker(className).processRequest(context);
-				processed = true;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			processed = true;
 		}
 	}
 
@@ -828,6 +830,6 @@ public class SmartHttpServer {
 	 *         <code>false</code>
 	 */
 	private boolean checkDate(long validUntil) {
-		return validUntil < System.currentTimeMillis() / 1000;
+		return validUntil > System.currentTimeMillis() / 1000;
 	}
 }
