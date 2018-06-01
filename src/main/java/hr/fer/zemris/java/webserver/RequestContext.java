@@ -404,8 +404,6 @@ public class RequestContext {
 			setMime(header);
 			setCookies(header);
 
-			header.append("\r\n");
-
 			try {
 				outputStream.write(header.toString().getBytes(charset));
 				outputStream.flush();
@@ -446,8 +444,9 @@ public class RequestContext {
 				header.append("\r\n");
 			}
 
-			header.append("\r\n");
 		}
+
+		header.append("\r\n");
 	}
 
 	/**
