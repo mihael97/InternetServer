@@ -203,9 +203,9 @@ public class SmartScriptEngine {
 			String tempValue = temp.pop();
 			String value;
 
-			if (string.equals("temporary"))
+			if (string.equals("temporary")) {
 				value = requestContext.getTemporaryParameter(temp.pop().toString());
-			else if (string.equals("persistant")) {
+			} else if (string.equals("persistant")) {
 				value = requestContext.getPersistentParameter(temp.pop().toString());
 			} else {
 				String key = temp.pop().toString();

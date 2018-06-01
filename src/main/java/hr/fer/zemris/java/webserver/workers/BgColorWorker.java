@@ -43,9 +43,9 @@ public class BgColorWorker implements IWebWorker {
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("<html><body>");
-		builder.append((changed == true) ? "Color has been changed " : "Color has not been changed ");
-		builder.append("<a href=\"http://www.localhost.com:5721/index2.html\"><br>Press return</a>");
-		builder.append("</body><html>");
+		builder.append((changed == true) ? "Color has been changed" : "Color has not been changed ");
+		builder.append("<a href=\"/index2.html\"><br>Press return</a>");
+		builder.append("</body></html>");
 
 		return builder.toString();
 	}

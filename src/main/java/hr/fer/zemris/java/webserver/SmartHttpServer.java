@@ -2,6 +2,7 @@ package hr.fer.zemris.java.webserver;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.net.InetSocketAddress;
@@ -29,7 +30,11 @@ import hr.fer.zemris.java.custom.scripting.parser.SmartScriptParser;
 import hr.fer.zemris.java.webserver.RequestContext.RCCookie;
 
 /**
- * Class represents implementation of basic {@link SmartHttpServer}
+ * Class represents implementation of basic {@link SmartHttpServer} <br>
+ * 
+ * For testing,I suggest you to use Opera as primarily browser and Chrome or
+ * Microsoft Edge as secondly(for last task). In my case(my computer),for some
+ * reason Firefox didn't want collect cookies, so I didn't test it there
  * 
  * @author Mihael
  *
@@ -611,7 +616,7 @@ public class SmartHttpServer {
 				ostream.flush();
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 
@@ -772,14 +777,13 @@ public class SmartHttpServer {
 
 			String extension = urlPath.substring(urlPath.lastIndexOf(".") + 1, urlPath.length());
 
-			RequestContext rc = new RequestContext(ostream, params, permPrams, outputCookies);
-			rc.setStatusCode(200);
-			rc.setMimeType(setMime(extension));
-			byte[] file;
+			Path path = documentRoot.resolve(Paths.get(urlPath));
+
 			try {
-				file = Files.readAllBytes(documentRoot.resolve(urlPath));
-				rc.setLength((long) file.length);
-				rc.write(file);
+				byte[] array = Files.readAllBytes(path);
+				context.setLength((long) array.length);
+				context.setMimeType(setMime(extension));
+				context.write(array);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

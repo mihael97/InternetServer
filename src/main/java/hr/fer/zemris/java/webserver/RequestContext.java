@@ -398,7 +398,7 @@ public class RequestContext {
 			header.append("HTTP/1.1 ").append(statusCode).append(" ").append(statusText).append("\r\n");
 
 			if (length != null) {
-				header.append("Content-Length: " + length.longValue());
+				header.append("Content-Length: " + length.longValue() + "\r\n");
 			}
 
 			setMime(header);
@@ -416,7 +416,7 @@ public class RequestContext {
 	}
 
 	/**
-	 * If cookies exist,method appends current header with informations about all
+	 * If cookies exist,method appends current header with informations about every
 	 * cookies
 	 * 
 	 * @param header
@@ -428,16 +428,16 @@ public class RequestContext {
 				header.append("Set-Cookie:");
 				header.append(" " + cookie.getName()).append("=\"").append(cookie.getValue()).append("\"");
 
+				if (cookie.getMaxAge() != null) {
+					header.append("; Max-Age=").append(cookie.maxAge);
+				}
+
 				if (cookie.getDomain() != null) {
 					header.append("; Domain=").append(cookie.domain);
 				}
 
 				if (cookie.getPath() != null) {
 					header.append("; Path=").append(cookie.path);
-				}
-
-				if (cookie.getMaxAge() != null) {
-					header.append("; Max-Age=").append(cookie.maxAge);
 				}
 
 				if (cookie.http == true) {
